@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="sq">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Profili • StoryVerse</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body onload="loadProfilePage()">
+
+    <header class="header">
+        <h2 class="logo">👤 Profili</h2>
+        <a class="btn small" href="index.html">⬅ Kthehu</a>
+        <button class="btn small" onclick="logout()">Dil</button>
+    </header>
+
+    <div class="profile-container">
+        
+        <!-- PROFILI -->
+        <div class="profile-header">
+            <img id="profileAvatar" class="avatar-big">
+
+            <div>
+                <h2 id="profileUsername"></h2>
+                <button id="followBtn" class="btn" onclick="toggleFollow()">Ndjek / Ndiq</button>
+                <p id="profileBio" class="bio"></p>
+            </div>
+        </div>
+
+        <!-- STATISTIKAT -->
+        <div class="stats-box">
+            <div>
+                <h3 id="statStories">0</h3>
+                <p>Histori</p>
+            </div>
+            <div>
+                <h3 id="statLikes">0</h3>
+                <p>Pëlqime</p>
+            </div>
+        </div>
+        <div>
+    <h3 id="statFollowers">0</h3>
+    <p>Followers</p>
+</div>
+<div>
+    <h3 id="statFollowing">0</h3>
+    <p>Following</p>
+</div>
+
+
+        <!-- EDIT PROFILI -->
+        <div class="edit-section">
+            <h3>⚙ Edito Profilin</h3>
+
+            <input type="text" id="editBio" placeholder="Ndrysho bio-n...">
+
+            <label>Zgjedh avatar:</label>
+            <select id="editAvatar">
+                <option value="img/a1.png">Avatar 1</option>
+                <option value="img/a2.png">Avatar 2</option>
+                <option value="img/a3.png">Avatar 3</option>
+                <option value="img/a4.png">Avatar 4</option>
+            </select>
+
+            <button class="btn" onclick="saveProfile()">Ruaj Ndryshimet</button>
+        </div>
+
+        <!-- HISTORITE E PERDORUESIT -->
+        <h3 style="margin-top:30px;">📚 Historitë e mia</h3>
+        <div id="userStoryList" class="story-list"></div>
+
+    </div>
+    <img id="profileBanner" class="banner" src="img/defaultBanner.jpg">
+    <div id="badgesContainer"></div>
+
+
+    <script src="profile.js"></script>
+</body>
+</html>

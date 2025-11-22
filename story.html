@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="sq">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lexo Histori • StoryVerse</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body onload="loadStoryPage()">
+
+    <header class="header">
+        <h2 class="logo">📖 Historia</h2>
+        <a href="index.html" class="btn small">⬅ Kthehu</a>
+    </header>
+
+    <div class="story-container">
+
+        <h1 id="storyTitle" class="story-title"></h1>
+
+        <!-- Autori -->
+        <div id="storyAuthor" class="author-box">
+            <img id="authorAvatar" class="avatar-small">
+            <p id="authorName"></p>
+        </div>
+
+        <!-- Përmbajtja -->
+        <p id="storyContent" class="story-text"></p>
+
+        <!-- Butonat -->
+        <div class="story-actions">
+            <button id="likeBtn" onclick="likeStory()">❤️ Like (<span id='likeCount'></span>)</button>
+            <button onclick="shareStory()">📤 Share</button>
+            <button onclick="bookmarkStory()">🔖 Favorit</button>
+            <button onclick="shareStory('facebook')">Facebook</button>
+<button onclick="shareStory('twitter')">Twitter</button>
+<button onclick="shareStory('whatsapp')">WhatsApp</button>
+
+        </div>
+
+        <!-- KOMENTET -->
+        <div class="comments-section">
+            <h3>💬 Komentet</h3>
+
+            <div id="commentsList"></div>
+
+            <textarea id="commentInput" placeholder="Shkruaj një koment..."></textarea>
+            <button class="btn" onclick="addComment()">Shto Koment</button>
+            
+        </div>
+
+    </div>
+ 
+
+
+    <script src="story.js"></script>
+</body>
+</html>
+

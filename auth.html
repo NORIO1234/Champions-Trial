@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="sq">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>StoryVerse • Hyrje</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body class="auth-body">
+
+    <div class="auth-container">
+
+        <h1 class="logo">🌌 StoryVerse</h1>
+
+        <div class="tabs">
+            <button id="loginTab" class="active" onclick="showLogin()">Hyr</button>
+            <button id="registerTab" onclick="showRegister()">Regjistrohu</button>
+        </div>
+
+        <!-- LOGIN FORM -->
+        <div id="loginForm" class="form visible">
+            <input type="text" id="loginUsername" placeholder="Username">
+            <input type="password" id="loginPassword" placeholder="Password">
+            <button onclick="login()" class="btn">Hyr</button>
+        </div>
+
+        <!-- REGISTER FORM -->
+        <div id="registerForm" class="form">
+            <input type="text" id="regUsername" placeholder="Zgjidh një username">
+            <input type="password" id="regPassword" placeholder="Zgjidh një password">
+            <label>Foto Profili:</label>
+            <input type="file" id="regAvatar" accept="image/*">
+            <button onclick="register()" class="btn">Regjistrohu</button>
+        </div>
+
+    </div>
+
+    <script src="auth.js"></script>
+</body>
+</html>

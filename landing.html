@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="sq">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>StoryVerse • Të gjitha historitë tuaja</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body onload="loadLandingPage()">
+
+    <header class="header">
+        <h2 class="logo">📚 StoryVerse</h2>
+        <nav>
+            <a href="create.html" class="btn">+ Krijo Histori</a>
+            <a href="trending.html" class="btn">🔥 Trending</a>
+            <a href="bookmarks.html" class="btn">⭐ Favoritet</a>
+            <a href="profile.html" class="btn">👤 Profili</a>
+        </nav>
+    </header>
+
+    <section class="landing-trending">
+        <h2>🔥 Historitë më të njohura</h2>
+        <div id="trendingContainer" class="story-list"></div>
+    </section>
+
+    <audio id="bgSound" src="sound/click.mp3"></audio>
+
+    <script src="landing.js"></script>
+</body>
+</html>

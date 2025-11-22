@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="sq">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>StoryVerse • Kreu</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body onload="loadHomePage()">
+
+    <!-- HEADER -->
+    <header class="header">
+        <div class="left">
+            <h2 class="logo">🌌 StoryVerse</h2>
+            
+        </div>
+
+        <div class="center">
+            <input type="text" placeholder="Kërko histori..." id="searchInput" oninput="searchStories()">
+        </div>
+
+        <div class="right">
+            <button onclick="toggleMode()" id="modeBtn">🌞</button>
+
+            <img id="userAvatar" class="avatar-small" onclick="goToProfile()">
+        </div>
+    </header>
+
+    <!-- CONTENT -->
+    <section class="character-gallery" aria-label="Characters">
+        <h3>🧍 Characters</h3>
+        <div class="character-grid">
+            <figure class="character-card">
+                <img class="character-photo" src="Walking_PNGs/Engineer_Walking/Engineer_Walking_Front.png" alt="Engineer character front view">
+                <figcaption>Engineer</figcaption>
+            </figure>
+
+            <figure class="character-card">
+                <img class="character-photo" src="Walking_PNGs/Hipster_Walking/Hipster_Walking_Front.png" alt="Hipster character front view">
+                <figcaption>Hipster</figcaption>
+            </figure>
+
+            <figure class="character-card">
+                <img class="character-photo" src="Walking_PNGs/Shadow_Walking/Shadow_Walking_Front.png" alt="Shadow character front view">
+                <figcaption>Shadow</figcaption>
+            </figure>
+
+            <figure class="character-card">
+                <img class="character-photo" src="Walking_PNGs/Speedster_Walking/Speedster_Walking_Front.png" alt="Speedster character front view">
+                <figcaption>Speedster</figcaption>
+            </figure>
+        </div>
+    </section>
+    <div class="content">
+
+        <div class="top-actions">
+            <h2>📚 Histori</h2>
+            <a href="create.html" class="btn">+ Shto Histori</a>
+        </div>
+
+        <div id="storyList" class="story-list"></div>
+
+    </div>
+    <audio id="bgSound" src="sound/click.mp3"></audio>
+
+
+    <script src="app.js"></script>
+</body>
+</html>
+

@@ -1,0 +1,5 @@
+function playClick() {
+    const sound = document.getElementById("bgSound");
+    sound.currentTime = 0;
+    sound.play();
+}

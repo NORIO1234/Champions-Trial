@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="sq">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Krijo Histori • StoryVerse</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body onload="loadCreatePage()">
+
+    <header class="header">
+        <h2 class="logo">✍️ Krijo Histori</h2>
+        <a href="index.html" class="btn small">⬅ Kthehu</a>
+    
+
+</select>
+
+    </header>
+
+    <div class="create-container">
+        <input type="text" id="storyTitle" placeholder="Titulli i Historisë">
+
+        <textarea id="storyContent" placeholder="Shkruaj historinë tënde..."></textarea>
+
+        <button class="btn publish-btn" onclick="publishStory()">Publiko Historinë</button>
+
+        <p id="autosaveText" class="autosave">Autosave…</p>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>
+<label>Zgjidh cover image për historinë:</label>
+<select id="storyCover">
+    <option value="img/cover1.jpg">Cover 1</option>
+    <option value="img/cover2.jpg">Cover 2</option>
+    <option value="img/cover3.jpg">Cover 3</option>
+    <option value="img/cover4.jpg">Cover 4</option>
+</select>
+<label>Kategoria:</label>
+<select id="storyCategory">
+    <option>Fantasy</option>
+    <option>Sci-Fi</option>
+    <option>Drama</option>
+    <option>Comedy</option>
+</select>
+<div contenteditable="true">
+<div id="storyContent" contenteditable="true" class="editor"></div>
