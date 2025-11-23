@@ -4,76 +4,74 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Profili • StoryVerse</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="style.css">
 </head>
-<body onload="loadProfilePage()">
+<body class="bg-light text-dark" onload="loadProfilePage()">
 
-    <header class="header">
-        <h2 class="logo">👤 Profili</h2>
-        <a class="btn small" href="index.html">⬅ Kthehu</a>
-        <button class="btn small" onclick="logout()">Dil</button>
-    </header>
+<nav class="navbar navbar-expand-lg navbar-light bg-white shadow-sm px-3">
+    <a class="navbar-brand" href="index.html">👤 StoryVerse</a>
+    <div class="ms-auto d-flex align-items-center">
+        <button id="modeBtn" class="btn btn-outline-secondary me-2" onclick="toggleMode()">🌞</button>
+        <button class="btn btn-outline-danger ms-2" onclick="logout()">Dil</button>
+    </div>
+</nav>
 
-    <div class="profile-container">
-        
-        <!-- PROFILI -->
-        <div class="profile-header">
-            <img id="profileAvatar" class="avatar-big">
-
+<div class="container my-4">
+    <div class="card p-4 shadow-sm">
+        <!-- Profile Header -->
+        <div class="d-flex align-items-center mb-3">
+            <img id="profileAvatar" class="rounded-circle me-3" width="70" height="70">
             <div>
-                <h2 id="profileUsername"></h2>
-                <button id="followBtn" class="btn" onclick="toggleFollow()">Ndjek / Ndiq</button>
-                <p id="profileBio" class="bio"></p>
+                <h4 id="profileUsername"></h4>
+                <button class="btn btn-outline-primary btn-sm" id="followBtn" onclick="toggleFollow()">
+    Ndjek
+</button>
+
+                <p id="profileBio" class="mb-0"></p>
+                
             </div>
         </div>
 
-        <!-- STATISTIKAT -->
-        <div class="stats-box">
-            <div>
-                <h3 id="statStories">0</h3>
-                <p>Histori</p>
-            </div>
-            <div>
-                <h3 id="statLikes">0</h3>
-                <p>Pëlqime</p>
-            </div>
+        <!-- Stats -->
+        <div class="d-flex gap-4 mb-3">
+            <div><strong id="statStories">0</strong> Histori</div>
+            <div><strong id="statLikes">0</strong> Pëlqime</div>
+            <div><strong id="statFollowers">0</strong> Followers</div>
+            <div><strong id="statFollowing">0</strong> Following</div>
         </div>
-        <div>
-    <h3 id="statFollowers">0</h3>
-    <p>Followers</p>
-</div>
-<div>
-    <h3 id="statFollowing">0</h3>
-    <p>Following</p>
-</div>
 
-
-        <!-- EDIT PROFILI -->
-        <div class="edit-section">
-            <h3>⚙ Edito Profilin</h3>
-
-            <input type="text" id="editBio" placeholder="Ndrysho bio-n...">
-
-            <label>Zgjedh avatar:</label>
-            <select id="editAvatar">
+        <!-- Edit Profile -->
+        <div class="mb-4">
+            <h5>⚙ Edito Profilin</h5>
+            <input type="text" id="editBio" class="form-control mb-2" placeholder="Ndrysho bio-n...">
+            <label for="editAvatar">Zgjedh avatar:</label>
+            <select id="editAvatar" class="form-select mb-2">
                 <option value="img/a1.png">Avatar 1</option>
                 <option value="img/a2.png">Avatar 2</option>
                 <option value="img/a3.png">Avatar 3</option>
                 <option value="img/a4.png">Avatar 4</option>
             </select>
-
-            <button class="btn" onclick="saveProfile()">Ruaj Ndryshimet</button>
+            <button class="btn btn-primary btn-sm" onclick="saveProfile()">Ruaj Ndryshimet</button>
         </div>
 
-        <!-- HISTORITE E PERDORUESIT -->
-        <h3 style="margin-top:30px;">📚 Historitë e mia</h3>
-        <div id="userStoryList" class="story-list"></div>
-
+        <!-- User Stories -->
+        <h5>📚 Historitë e mia</h5>
+        <div id="userStoryList" class="row row-cols-1 row-cols-md-2 g-3"></div>
     </div>
-    <img id="profileBanner" class="banner" src="img/defaultBanner.jpg">
-    <div id="badgesContainer"></div>
+</div>
 
-
-    <script src="profile.js"></script>
+<script src="profile.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+function toggleMode() {
+    document.body.classList.toggle("bg-dark");
+    document.body.classList.toggle("text-light");
+    const btn = document.getElementById("modeBtn");
+    btn.textContent = document.body.classList.contains("bg-dark") ? "🌙" : "🌞";
+}
+</script>
 </body>
 </html>
+
+

@@ -4,17 +4,40 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Favoritet • StoryVerse</title>
+
+    <!-- Bootstrap -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- Style yt -->
     <link rel="stylesheet" href="style.css">
 </head>
-<body onload="loadBookmarks()">
+<body onload="loadBookmarks()" class="bg-light">
 
-    <header class="header">
-        <h2 class="logo">⭐ Favoritet</h2>
-        <a href="index.html" class="btn small">⬅ Kthehu</a>
-    </header>
+    <!-- HEADER -->
+    <nav class="navbar navbar-expand-lg navbar-light bg-white shadow-sm mb-4">
+        <div class="container">
+            <span class="navbar-brand fw-bold">⭐ Favoritet</span>
+            <a href="index.html" class="btn btn-outline-primary btn-sm">⬅ Kthehu</a>
+        </div>
+        <!-- Dark/Light Mode Toggle -->
+<div class="d-flex ms-auto">
+    <button id="modeBtn" class="btn btn-outline-light">🌞</button>
+</div>
 
-    <div class="story-list" id="bookmarkList"></div>
+    </nav>
 
+    <!-- STORY LIST -->
+    <div class="container">
+        <div class="row g-4" id="bookmarkList">
+            <!-- Bookmark cards will be injected here by bookmarks.js -->
+        </div>
+    </div>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+
+    <!-- Script yt -->
     <script src="bookmarks.js"></script>
+
 </body>
 </html>

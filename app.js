@@ -1,24 +1,29 @@
-// Ngarkimi i faqes së kreut
+/* ============================================
+   HOMEPAGE LOAD
+============================================ */
 function loadHomePage() {
-    // kontrollo login
     const currentUser = localStorage.getItem("currentUser");
+
     if (!currentUser) {
         window.location.href = "auth.html";
         return;
     }
 
-    // Ngarko avatarin e user-it
+    // Load user avatar
     let users = JSON.parse(localStorage.getItem("users")) || [];
     let user = users.find(u => u.username === currentUser);
 
-    document.getElementById("userAvatar").src = user.avatar;
+    if (user && user.avatar) {
+        document.getElementById("userAvatar").src = user.avatar;
+    }
 
     loadStories();
     loadTheme();
 }
 
-
-// Shfaq të gjitha historitë
+/* ============================================
+   LOAD STORIES WITH BOOTSTRAP CARDS
+============================================ */
 function loadStories() {
     let stories = JSON.parse(localStorage.getItem("stories")) || [];
     let container = document.getElementById("storyList");
@@ -26,83 +31,104 @@ function loadStories() {
     container.innerHTML = "";
 
     if (stories.length === 0) {
-        container.innerHTML = "<p>Nuk ka histori ende. Bëhu i pari që shton një! ✨</p>";
+        container.innerHTML = `
+            <p class="text-muted">Nuk ka histori ende. Bëhu i pari që shton një! ✨</p>
+        `;
         return;
     }
 
-    stories.reverse().forEach(story => {
-        const div = document.createElement("div");
-        div.className = "story-card";
+    stories.reverse();
 
-        div.innerHTML = `
-            <h3>${story.title}</h3>
-            <p>${story.content.substring(0, 80)}...</p>
-            <div class="story-footer">
-                <span>❤️ ${story.likes || 0}</span>
-                <button class="read-btn" onclick="openStory(${story.id})">Lexo</button>
-            </div>
-        `;
+    container.classList.add("row", "g-4");
 
-        container.appendChild(div);
+    container.innerHTML = stories.map((story, idx) => createStoryCard(story, idx)).join("");
+
+    // Add fade-in animation
+    document.querySelectorAll(".story-card").forEach((el, i) => {
+        el.classList.add("fade-in");
+        el.style.animationDelay = (i * 0.1) + "s";
     });
+}
+
+function createStoryCard(story) {
+    return `
+        <div class="col-12 col-md-6 col-lg-4">
+            <div class="card story-card h-100 shadow-sm">
+                <div class="card-body d-flex flex-column">
+
+                    <h5 class="card-title fw-bold">${story.title}</h5>
+
+                    <p class="card-text flex-grow-1">
+                        ${story.content.substring(0, 120)}...
+                    </p>
+
+                    <div class="d-flex justify-content-between align-items-center mt-3">
+                        <button onclick="openStory(${story.id})" class="btn btn-primary btn-sm read-btn">
+                            Lexo
+                        </button>
+                        <span class="text-danger">❤️ ${story.likes || 0}</span>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    `;
 }
 
 function openStory(id) {
     window.location.href = `story.html?id=${id}`;
 }
 
-
-// KËRKIMI I HISTORIVE
+/* ============================================
+   STORY SEARCH
+============================================ */
 function searchStories() {
-    const query = document.getElementById("searchInput").value.toLowerCase();
+    const input = document.getElementById("searchInput") || document.getElementById("searchInputMobile");
+    const query = input.value.toLowerCase();
+
     const stories = document.querySelectorAll(".story-card");
 
-    stories.forEach(story => {
-        const text = story.innerText.toLowerCase();
-        story.style.display = text.includes(query) ? "block" : "none";
+    stories.forEach(card => {
+        const text = card.innerText.toLowerCase();
+        card.style.display = text.includes(query) ? "block" : "none";
     });
 }
 
-
-// DARK / LIGHT MODE
+/* ============================================
+   DARK / LIGHT MODE
+============================================ */
 function toggleMode() {
-    const current = localStorage.getItem("theme") || "light";
+    const isDark = document.body.classList.toggle("dark-mode");
+    localStorage.setItem("theme", isDark ? "dark" : "light");
 
-    if (current === "light") {
-        document.body.classList.add("dark");
-        localStorage.setItem("theme", "dark");
-        document.getElementById("modeBtn").textContent = "🌙";
-    } else {
-        document.body.classList.remove("dark");
-        localStorage.setItem("theme", "light");
-        document.getElementById("modeBtn").textContent = "🌞";
-    }
+    document.getElementById("modeBtn").textContent = isDark ? "🌙" : "🌞";
 }
 
 function loadTheme() {
-    const theme = localStorage.getItem("theme") || "light";
+    const theme = localStorage.getItem("theme");
 
     if (theme === "dark") {
-        document.body.classList.add("dark");
+        document.body.classList.add("dark-mode");
         document.getElementById("modeBtn").textContent = "🌙";
     } else {
-        document.body.classList.remove("dark");
+        document.body.classList.remove("dark-mode");
         document.getElementById("modeBtn").textContent = "🌞";
     }
 }
 
-
-// SHKO NË PROFIL
+/* ============================================
+   REDIRECT TO PROFILE
+============================================ */
 function goToProfile() {
     window.location.href = "profile.html";
 }
 
-/* ===============================
-     CREATE STORY PAGE
-================================ */
-
+/* ============================================
+   CREATE STORY PAGE SETUP
+============================================ */
 function loadCreatePage() {
     const currentUser = localStorage.getItem("currentUser");
+
     if (!currentUser) {
         window.location.href = "auth.html";
         return;
@@ -115,36 +141,32 @@ function loadCreatePage() {
     if (draftTitle) document.getElementById("storyTitle").value = draftTitle;
     if (draftContent) document.getElementById("storyContent").value = draftContent;
 
-    // Autosave events
     document.getElementById("storyTitle").addEventListener("input", autoSaveDraft);
     document.getElementById("storyContent").addEventListener("input", autoSaveDraft);
 }
 
 function autoSaveDraft() {
-    const title = document.getElementById("storyTitle").value;
-    const content = document.getElementById("storyContent").value;
+    localStorage.setItem("draft_title", document.getElementById("storyTitle").value);
+    localStorage.setItem("draft_content", document.getElementById("storyContent").value);
 
-    localStorage.setItem("draft_title", title);
-    localStorage.setItem("draft_content", content);
-
-    document.getElementById("autosaveText").innerText = "Auto-ruajtur…";
-    setTimeout(() => {
-        document.getElementById("autosaveText").innerText = "";
-    }, 1000);
+    const autosave = document.getElementById("autosaveText");
+    autosave.innerText = "Auto-ruajtur…";
+    setTimeout(() => autosave.innerText = "", 1000);
 }
 
-
-// PUBLIKO HISTORINË
+/* ============================================
+   PUBLISH STORY
+============================================ */
 function publishStory() {
     const title = document.getElementById("storyTitle").value.trim();
     const content = document.getElementById("storyContent").value.trim();
+    const coverImage = document.getElementById("storyCover")?.value || "";
+    const currentUser = localStorage.getItem("currentUser");
 
     if (!title || !content) {
         alert("Ju lutem plotësoni titullin dhe përmbajtjen.");
         return;
     }
-
-    const currentUser = localStorage.getItem("currentUser");
 
     let stories = JSON.parse(localStorage.getItem("stories")) || [];
 
@@ -154,20 +176,21 @@ function publishStory() {
         content,
         author: currentUser,
         likes: 0,
-        comments: []
+        comments: [],
+        cover: coverImage
     };
 
     stories.push(newStory);
     localStorage.setItem("stories", JSON.stringify(stories));
 
-    // Shto historinë në profilin e user-it
+    // Add to user's story list
     let users = JSON.parse(localStorage.getItem("users"));
     let user = users.find(u => u.username === currentUser);
 
     user.stories.push(newStory.id);
     localStorage.setItem("users", JSON.stringify(users));
 
-    // Pastro draftin
+    // Clear draft
     localStorage.removeItem("draft_title");
     localStorage.removeItem("draft_content");
 
@@ -175,12 +198,12 @@ function publishStory() {
     setTimeout(() => window.location.href = "index.html", 700);
 }
 
-// Unified toast notification
+/* ============================================
+   NOTIFICATIONS (Toast)
+============================================ */
 function showNotification(msg, options = {}) {
-    // options: { duration }
     const duration = options.duration || 2500;
 
-    // create container if missing
     let container = document.getElementById('toast-container');
     if (!container) {
         container = document.createElement('div');
@@ -193,17 +216,19 @@ function showNotification(msg, options = {}) {
     notif.textContent = msg;
     container.appendChild(notif);
 
-    // animate in
     requestAnimationFrame(() => notif.classList.add('show'));
 
-    // remove after duration
     setTimeout(() => {
         notif.classList.remove('show');
         setTimeout(() => notif.remove(), 300);
     }, duration);
 }
 
+/* ============================================
+   FOLLOW USERS
+============================================ */
 function followUser(username) {
+    const currentUser = localStorage.getItem("currentUser");
     if (username === currentUser) return;
 
     let users = JSON.parse(localStorage.getItem("users"));
@@ -219,44 +244,50 @@ function followUser(username) {
         showNotification(`Tashmë e ndiqni ${username}`);
     }
 }
-let coverImage = document.getElementById("storyCover").value;
 
-let newStory = {
-    id: Date.now(),
-    title: title,
-    content: content,
-    author: currentUser,
-    likes: 0,
-    comments: [],
-    cover: coverImage
-};
-document.querySelectorAll(".read-btn").forEach(btn => {
-    btn.addEventListener("click", () => {
-        document.getElementById("bgSound").play();
+/* ============================================
+   SOUND ON BUTTON CLICK
+============================================ */
+document.addEventListener("click", e => {
+    if (e.target.classList.contains("read-btn")) {
+        const sound = document.getElementById("bgSound");
+        if (sound) sound.play();
+    }
+});
+// Dark/Light Mode JS
+document.addEventListener('DOMContentLoaded', () => {
+    const btn = document.getElementById('modeBtn');
+    if (!btn) return;
+
+    // Merr gjendjen nga localStorage
+    const darkMode = localStorage.getItem('darkMode') === 'true';
+    if (darkMode) document.documentElement.setAttribute('data-theme', 'dark');
+    btn.textContent = darkMode ? '🌙' : '🌞';
+
+    btn.addEventListener('click', () => {
+        const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+        if (isDark) {
+            document.documentElement.removeAttribute('data-theme');
+            btn.textContent = '🌞';
+            localStorage.setItem('darkMode', false);
+        } else {
+            document.documentElement.setAttribute('data-theme', 'dark');
+            btn.textContent = '🌙';
+            localStorage.setItem('darkMode', true);
+        }
     });
 });
-// (keep only the unified showNotification above)
-function toggleDarkMode() {
-    document.body.classList.toggle("dark-mode");
-    localStorage.setItem("darkMode", document.body.classList.contains("dark-mode"));
+
+function showLogin() {
+    document.getElementById("loginForm").classList.remove("d-none");
+    document.getElementById("registerForm").classList.add("d-none");
+    document.getElementById("login-tab").classList.add("active");
+    document.getElementById("register-tab").classList.remove("active");
 }
 
-// kontrollo në ngarkim faqesh
-if(localStorage.getItem("darkMode") === "true"){
-    document.body.classList.add("dark-mode");
+function showRegister() {
+    document.getElementById("registerForm").classList.remove("d-none");
+    document.getElementById("loginForm").classList.add("d-none");
+    document.getElementById("register-tab").classList.add("active");
+    document.getElementById("login-tab").classList.remove("active");
 }
-category: document.getElementById("storyCategory").value
-let storiesPerPage = 5;
-let currentPage = 1;
-
-function loadLandingPage() {
-    const start = (currentPage-1)*storiesPerPage;
-    const end = start+storiesPerPage;
-    displayStories(stories.slice(start,end));
-}
-
-function loadMore() {
-    currentPage++;
-    loadLandingPage();
-}
-function playSound() { document.getElementById("bgSound").play(); }

@@ -4,37 +4,56 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>StoryVerse • Hyrje</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="style.css">
 </head>
-<body class="auth-body">
+<body class="bg-light">
 
-    <div class="auth-container">
+<div class="container d-flex justify-content-center align-items-center min-vh-100">
+    <div class="card shadow p-4" style="max-width: 400px; width: 100%;">
+        <h1 class="text-center mb-3">🌌 StoryVerse</h1>
 
-        <h1 class="logo">🌌 StoryVerse</h1>
+        <!-- Tabs -->
+        <ul class="nav nav-tabs mb-3" id="authTabs" role="tablist">
+            <li class="nav-item w-50 text-center">
+                <button class="nav-link active" id="login-tab" onclick="showLogin()">Hyr</button>
+            </li>
+            <li class="nav-item w-50 text-center">
+                <button class="nav-link" id="register-tab" onclick="showRegister()">Regjistrohu</button>
+            </li>
+        </ul>
 
-        <div class="tabs">
-            <button id="loginTab" class="active" onclick="showLogin()">Hyr</button>
-            <button id="registerTab" onclick="showRegister()">Regjistrohu</button>
+        <!-- Login Form -->
+        <div id="loginForm" class="auth-form">
+            <div class="mb-3">
+                <input type="text" id="loginUsername" class="form-control" placeholder="Username">
+            </div>
+            <div class="mb-3">
+                <input type="password" id="loginPassword" class="form-control" placeholder="Password">
+            </div>
+            <button class="btn btn-primary w-100" onclick="login()">Hyr</button>
         </div>
 
-        <!-- LOGIN FORM -->
-        <div id="loginForm" class="form visible">
-            <input type="text" id="loginUsername" placeholder="Username">
-            <input type="password" id="loginPassword" placeholder="Password">
-            <button onclick="login()" class="btn">Hyr</button>
-        </div>
-
-        <!-- REGISTER FORM -->
-        <div id="registerForm" class="form">
-            <input type="text" id="regUsername" placeholder="Zgjidh një username">
-            <input type="password" id="regPassword" placeholder="Zgjidh një password">
-            <label>Foto Profili:</label>
-            <input type="file" id="regAvatar" accept="image/*">
-            <button onclick="register()" class="btn">Regjistrohu</button>
+        <!-- Register Form -->
+        <div id="registerForm" class="auth-form d-none">
+            <div class="mb-3">
+                <input type="text" id="regUsername" class="form-control" placeholder="Zgjidh një username">
+            </div>
+            <div class="mb-3">
+                <input type="password" id="regPassword" class="form-control" placeholder="Zgjidh një password">
+            </div>
+            <div class="mb-3">
+                <label>Foto Profili:</label>
+                <input type="file" id="regAvatar" class="form-control" accept="image/*">
+            </div>
+            <button class="btn btn-success w-100" onclick="register()">Regjistrohu</button>
         </div>
 
     </div>
+</div>
 
-    <script src="auth.js"></script>
+<script src="auth.js"></script>
+<script src="app.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>

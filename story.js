@@ -1,15 +1,17 @@
 /* ===============================
-        STORY PAGE - Consolidated
-================================ */
+        STORY PAGE
+=============================== */
 
 let storyId;
 let storyData;
 let currentUser;
 
-// Load page and initialize
+/* ===========================
+        INIT PAGE
+=========================== */
 function loadStoryPage() {
     currentUser = localStorage.getItem("currentUser");
-    // Allow viewing by guests? Original code redirected to auth; keep that behavior
+
     if (!currentUser) {
         window.location.href = "auth.html";
         return;
@@ -26,7 +28,15 @@ function loadStoryPage() {
         return;
     }
 
-    // populate fields
+    populateStoryFields();
+    storyData.comments = storyData.comments || [];
+    loadComments();
+}
+
+/* ===========================
+        POPULATE STORY
+=========================== */
+function populateStoryFields() {
     const titleEl = document.getElementById("storyTitle");
     const contentEl = document.getElementById("storyContent");
     const likeEl = document.getElementById("likeCount");
@@ -41,13 +51,11 @@ function loadStoryPage() {
     const author = users.find(u => u.username === storyData.author) || {};
     if (authorAvatar && author.avatar) authorAvatar.src = author.avatar;
     if (authorName) authorName.textContent = author.username || storyData.author;
-
-    // ensure comments array
-    storyData.comments = storyData.comments || [];
-
-    loadComments();
 }
 
+/* ===========================
+        SAVE STORIES
+=========================== */
 function saveStories() {
     const stories = JSON.parse(localStorage.getItem("stories")) || [];
     const idx = stories.findIndex(s => String(s.id) === String(storyId));
@@ -57,13 +65,15 @@ function saveStories() {
     }
 }
 
-/* ========== Likes ========== */
+/* ===========================
+        LIKE STORY
+=========================== */
 function likeStory() {
     const liked = JSON.parse(localStorage.getItem("likedStories")) || {};
     if (!liked[currentUser]) liked[currentUser] = [];
 
     if (liked[currentUser].includes(String(storyId))) {
-           if (typeof showNotification === 'function') showNotification("E ke pëlqyer këtë histori më parë!", { duration: 2000 });
+        showNotificationSafe("E ke pëlqyer këtë histori më parë!");
         return;
     }
 
@@ -72,11 +82,16 @@ function likeStory() {
 
     storyData.likes = (storyData.likes || 0) + 1;
     saveStories();
-    document.getElementById("likeCount").textContent = storyData.likes;
-        if (typeof showNotification === 'function') showNotification('U pëlqye historia!', { duration: 1800 });
+
+    const likeEl = document.getElementById("likeCount");
+    if (likeEl) likeEl.textContent = storyData.likes;
+
+    showNotificationSafe("U pëlqye historia!");
 }
 
-/* ========== Comments ========== */
+/* ===========================
+        COMMENTS
+=========================== */
 function loadComments() {
     const list = document.getElementById("commentsList");
     if (!list) return;
@@ -89,19 +104,19 @@ function loadComments() {
 
     storyData.comments.forEach((c, index) => {
         const div = document.createElement("div");
-        div.className = "comment-box";
+        div.className = "comment-box mb-2 p-2 border rounded";
 
-        // main comment
-        const header = document.createElement('div');
-        header.innerHTML = `<strong>${c.user}</strong> <small class='comment-date'>${c.date || ''}</small>`;
+        const header = document.createElement("div");
+        header.innerHTML = `<strong>${c.user}</strong> <small class='text-muted'>${c.date || ''}</small>`;
 
-        const text = document.createElement('p');
+        const text = document.createElement("p");
         text.textContent = c.text;
 
-        const actions = document.createElement('div');
-        actions.className = 'comment-actions';
-        const replyBtn = document.createElement('button');
-        replyBtn.textContent = 'Përgjigju';
+        const actions = document.createElement("div");
+        actions.className = "comment-actions";
+        const replyBtn = document.createElement("button");
+        replyBtn.textContent = "Përgjigju";
+        replyBtn.className = "btn btn-sm btn-outline-primary mt-1";
         replyBtn.onclick = () => replyComment(index);
         actions.appendChild(replyBtn);
 
@@ -109,13 +124,12 @@ function loadComments() {
         div.appendChild(text);
         div.appendChild(actions);
 
-        // replies
         if (Array.isArray(c.replies) && c.replies.length) {
-            const repliesDiv = document.createElement('div');
-            repliesDiv.className = 'replies';
+            const repliesDiv = document.createElement("div");
+            repliesDiv.className = "replies ms-3 mt-2";
             c.replies.forEach(r => {
-                const rDiv = document.createElement('div');
-                rDiv.className = 'reply';
+                const rDiv = document.createElement("div");
+                rDiv.className = "reply p-1 border rounded mb-1";
                 rDiv.textContent = `${r.user}: ${r.text}`;
                 repliesDiv.appendChild(rDiv);
             });
@@ -132,51 +146,71 @@ function addComment() {
     const text = input.value.trim();
     if (!text) return;
 
-    const date = new Date().toLocaleString();
-    const comment = { user: currentUser, text, date, replies: [] };
-
+    const comment = { user: currentUser, text, date: new Date().toLocaleString(), replies: [] };
     storyData.comments.push(comment);
     saveStories();
 
-    input.value = '';
+    input.value = "";
     loadComments();
-    if (typeof showNotification === 'function') showNotification('Komenti u shtua me sukses!');
+    showNotificationSafe("Komenti u shtua me sukses!");
 }
 
 function replyComment(index) {
-    const reply = prompt("Shkruaj përgjigjen:");
-    if (!reply) return;
+    const replyText = prompt("Shkruaj përgjigjen:");
+    if (!replyText) return;
+
     storyData.comments[index].replies = storyData.comments[index].replies || [];
-    storyData.comments[index].replies.push({ user: currentUser, text: reply });
+    storyData.comments[index].replies.push({ user: currentUser, text: replyText });
     saveStories();
     loadComments();
 }
 
-/* ========== Share & Bookmark ========== */
+/* ===========================
+        SHARE & BOOKMARK
+=========================== */
 function shareStory(platform) {
+    const url = encodeURIComponent(window.location.href);
+    const text = encodeURIComponent(storyData.title || "");
+
     if (!platform) {
         navigator.clipboard.writeText(window.location.href);
-            if (typeof showNotification === 'function') showNotification("Linku i historisë u kopjua!");
+        showNotificationSafe("Linku i historisë u kopjua!");
         return;
     }
-    const url = encodeURIComponent(window.location.href);
-    const text = encodeURIComponent(storyData.title || '');
-    if (platform === 'facebook') window.open(`https://www.facebook.com/sharer/sharer.php?u=${url}`);
-    if (platform === 'twitter') window.open(`https://twitter.com/intent/tweet?url=${url}&text=${text}`);
-    if (platform === 'whatsapp') window.open(`https://wa.me/?text=${text}%20${url}`);
+
+    if (platform === "facebook") window.open(`https://www.facebook.com/sharer/sharer.php?u=${url}`);
+    if (platform === "twitter") window.open(`https://twitter.com/intent/tweet?url=${url}&text=${text}`);
+    if (platform === "whatsapp") window.open(`https://wa.me/?text=${text}%20${url}`);
 }
 
 function bookmarkStory() {
     const bookmarks = JSON.parse(localStorage.getItem("bookmarks")) || {};
     if (!bookmarks[currentUser]) bookmarks[currentUser] = [];
+
     if (bookmarks[currentUser].includes(String(storyId))) {
-            if (typeof showNotification === 'function') showNotification("Historia është tashmë në Favoritet!");
+        showNotificationSafe("Historia është tashmë në Favoritet!");
         return;
     }
+
     bookmarks[currentUser].push(String(storyId));
     localStorage.setItem("bookmarks", JSON.stringify(bookmarks));
-        if (typeof showNotification === 'function') showNotification("Historia u shtua në Favoritet! ⭐");
+    showNotificationSafe("Historia u shtua në Favoritet! ⭐");
 }
 
-// expose saveStories for potential reuse
+/* ===========================
+        UTILITIES
+=========================== */
+function showNotificationSafe(message) {
+    if (typeof showNotification === "function") showNotification(message);
+    else alert(message);
+}
+
+// expose saveStories in case other scripts need it
 window.saveStories = saveStories;
+
+/* ===========================
+        INIT
+=========================== */
+document.addEventListener("DOMContentLoaded", loadStoryPage);
+
+

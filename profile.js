@@ -2,7 +2,6 @@
         PROFILE PAGE
 =========================== */
 
-// Keep a single source of truth for current user and their data
 let currentUser = localStorage.getItem("currentUser");
 let userData = null;
 
@@ -10,7 +9,6 @@ function loadProfilePage() {
     currentUser = localStorage.getItem("currentUser");
 
     if (!currentUser) {
-        // No logged-in user, redirect to login
         window.location.href = "auth.html";
         return;
     }
@@ -19,13 +17,11 @@ function loadProfilePage() {
     userData = users.find(u => u.username === currentUser) || null;
 
     if (!userData) {
-        // If user record missing, clear session and redirect to login
         localStorage.removeItem("currentUser");
         window.location.href = "auth.html";
         return;
     }
 
-    // populate profile fields safely
     const avatarEl = document.getElementById("profileAvatar");
     const usernameEl = document.getElementById("profileUsername");
     const bioEl = document.getElementById("profileBio");
@@ -41,14 +37,9 @@ function loadProfilePage() {
     loadUserStats();
     loadUserStories();
     updateFollowButton();
-    // banner/stats may be optional in markup
+
     const banner = document.getElementById("profileBanner");
     if (banner) banner.src = userData.banner || "img/defaultBanner.jpg";
-
-    const avgEl = document.getElementById("avgReadTime");
-    const viewsEl = document.getElementById("totalViews");
-    if (avgEl) avgEl.textContent = (typeof calculateAvgReadTime === 'function') ? calculateAvgReadTime(userData) : "-";
-    if (viewsEl) viewsEl.textContent = (typeof calculateTotalViews === 'function') ? calculateTotalViews(userData) : "-";
 }
 
 /* ===========================
@@ -57,15 +48,15 @@ function loadProfilePage() {
 
 function loadUserStats() {
     const stories = JSON.parse(localStorage.getItem("stories")) || [];
-
     const myStories = stories.filter(s => s.author === currentUser);
 
-    // numri i historive
     document.getElementById("statStories").textContent = myStories.length;
 
-    // total likes
-    let totalLikes = myStories.reduce((a, b) => a + b.likes, 0);
+    let totalLikes = myStories.reduce((sum, s) => sum + (s.likes || 0), 0);
     document.getElementById("statLikes").textContent = totalLikes;
+
+    document.getElementById("statFollowers") && (document.getElementById("statFollowers").textContent = (userData.followers || []).length);
+    document.getElementById("statFollowing") && (document.getElementById("statFollowing").textContent = (userData.following || []).length);
 }
 
 /* ===========================
@@ -76,6 +67,8 @@ function loadUserStories() {
     const stories = JSON.parse(localStorage.getItem("stories")) || [];
     const container = document.getElementById("userStoryList");
 
+    container.innerHTML = "";
+
     const myStories = stories.filter(s => s.author === currentUser);
 
     if (myStories.length === 0) {
@@ -84,16 +77,26 @@ function loadUserStories() {
     }
 
     myStories.forEach(story => {
-        const div = document.createElement("div");
-        div.className = "story-card";
+        const col = document.createElement("div");
+        col.className = "col-12 col-md-6 col-lg-4";
 
-        div.innerHTML = `
-            <h3>${story.title}</h3>
-            <p>${story.content.substring(0, 100)}...</p>
-            <button class="read-btn" onclick="openStory(${story.id})">Lexo</button>
+        const card = document.createElement("div");
+        card.className = "card h-100 shadow-sm";
+
+        card.innerHTML = `
+            <img src="${story.cover || 'img/defaultCover.png'}" class="card-img-top" alt="${story.title}">
+            <div class="card-body">
+                <h5 class="card-title">${story.title}</h5>
+                <p class="card-text">${story.content.substring(0, 100)}...</p>
+            </div>
+            <div class="card-footer d-flex justify-content-between align-items-center">
+                <span>❤️ ${story.likes || 0}</span>
+                <button class="btn btn-primary btn-sm" onclick="openStory(${story.id})">Lexo</button>
+            </div>
         `;
 
-        container.appendChild(div);
+        col.appendChild(card);
+        container.appendChild(col);
     });
 }
 
@@ -108,10 +111,7 @@ function openStory(id) {
 function saveProfile() {
     let users = JSON.parse(localStorage.getItem("users")) || [];
     let user = users.find(u => u.username === currentUser);
-    if (!user) {
-        alert("Gabim: përdoruesi nuk u gjet.");
-        return;
-    }
+    if (!user) return alert("Gabim: përdoruesi nuk u gjet.");
 
     const bioInput = document.getElementById("editBio");
     const avatarInput = document.getElementById("editAvatar");
@@ -120,32 +120,24 @@ function saveProfile() {
     user.avatar = avatarInput ? avatarInput.value : (user.avatar || "");
 
     localStorage.setItem("users", JSON.stringify(users));
-    // refresh local userData reference
     userData = user;
 
     if (typeof showNotification === 'function') showNotification("Profili u ruajt me sukses!"); else alert("Profili u ruajt me sukses!");
     loadProfilePage();
-
-    // update follower/following counts if elements exist
-    document.getElementById("statFollowers") && (document.getElementById("statFollowers").textContent = (userData.followers || []).length);
-    document.getElementById("statFollowing") && (document.getElementById("statFollowing").textContent = (userData.following || []).length);
 }
+
 function toggleFollow() {
     let users = JSON.parse(localStorage.getItem("users"));
-
-    // user-i që po shikohet
     const profileUser = users.find(u => u.username === userData.username);
     const me = users.find(u => u.username === currentUser);
 
     if (!profileUser || !me) return;
 
     if ((me.following || []).includes(profileUser.username)) {
-        // Unfollow
-        me.following = (me.following || []).filter(u => u !== profileUser.username);
-        profileUser.followers = (profileUser.followers || []).filter(u => u !== currentUser);
+        me.following = me.following.filter(u => u !== profileUser.username);
+        profileUser.followers = profileUser.followers.filter(u => u !== currentUser);
         showNotification(`Tashmë nuk e ndjek ${profileUser.username}`);
     } else {
-        // Follow
         me.following = me.following || [];
         profileUser.followers = profileUser.followers || [];
         me.following.push(profileUser.username);
@@ -154,41 +146,38 @@ function toggleFollow() {
     }
 
     localStorage.setItem("users", JSON.stringify(users));
-
-    // Rifresko butonin
     updateFollowButton();
 }
 
 function updateFollowButton() {
     const btn = document.getElementById("followBtn");
+    if (!btn) return;
 
     if (currentUser === userData.username) {
-        btn.style.display = "none"; // mos shfaq tek profili yt
+        btn.style.display = "none";
         return;
     }
 
-    if (userData.followers.includes(currentUser)) {
+    if ((userData.followers || []).includes(currentUser)) {
         btn.textContent = "✅ Ndiqur";
     } else {
         btn.textContent = "Ndjek";
     }
 }
 
-// call initial loader
-document.addEventListener('DOMContentLoaded', loadProfilePage);
-
 function logout() {
     if (localStorage.getItem("currentUser")) {
-        localStorage.removeItem("currentUser"); // clear session
-        // small confirmation then redirect
+        localStorage.removeItem("currentUser");
         alert("U log out me sukses!");
-        window.location.href = "auth.html"; // redirect to login
+        window.location.href = "auth.html";
     } else {
         alert("Nuk ka përdorues të loguar!");
     }
 }
 
-// Provide safe fallbacks for helper functions if not defined elsewhere
+document.addEventListener('DOMContentLoaded', loadProfilePage);
+
+// Safe fallbacks
 if (typeof calculateAvgReadTime !== 'function') {
     function calculateAvgReadTime(u) { return "-"; }
 }
